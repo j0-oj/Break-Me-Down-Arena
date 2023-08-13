@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Registering User</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/register.design.css">
+        <script src="js/registering-script.js" defer></script>
+    </head>
+    <body>
+        <section class="container min-vh-100 d-flex justify-content-center align-items-center">
+            <form>
+                <div class="row mb-3">
+                    <h1 class="text-center">Registration</h1>
+                </div>
+                <div class="row mb-3">
+                    <label class="form-label-wrapper form-label" for="username">Username</label>
+                    <input class="form-control" id="username" type="text">
+                </div>
+                <div class="row mb-3">
+                    <div class="col p-0 pe-2">
+                        <label class="form-label" for="firstName">First Name</label>
+                        <input class="form-control" id="firstName" type="text">
+                    </div>
+                    <div class="col p-0 ps-2">
+                        <label class="form-label" for="lastName">Last Name</label>
+                        <input class="form-control" id="lastName" type="text">
+                    </div>
+                </div>
+                <div class="row mb-3">
+                    <label class="form-label-wrapper form-label" for="email">Email</label>
+                    <input class="form-control" id="email" type="text">
+                </div>
+                <div class="row mb-3">
+                    <label class="form-label-wrapper form-label" for="userPassword">Password</label>
+                    <input class="form-control" id="userPassword" type="text">
+                </div>
+                <div class="row mb-3">
+                    <label class="form-label-wrapper form-label" for="confirmPassword">Confirm Password</label>
+                    <input class="form-control" id="confirmPassword" type="text">
+                </div>
+                <div class="row" id="remarkProviderSection">
+                    <ul class="list-group list-group-flush" id="remarkProvider">
+                    </ul>
+                </div>
+                <div class="row mb-3">
+                    <div class="col p-0 pe-2">
+                        <button class="btn btn-primary w-100" id="submit">Submit</button>
+                    </div>
+                    <div class="col p-0 ps-2">
+                        <button class="btn btn-primary w-100" id="reset" type="button">Reset</button>
+                    </div>
+                </div>
+            </form>
+        </section>
+    </body>
+</html>
