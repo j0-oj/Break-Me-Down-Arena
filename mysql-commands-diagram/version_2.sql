@@ -76,6 +76,6 @@ CREATE TABLE Session (
     userID      INT,
     timeOfLogin TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ipAddress   BIGINT,
-    PRIMARY KEY (historyID),
+    PRIMARY KEY (sessionID),
     FOREIGN KEY (userID) REFERENCES User(userID)
 );
