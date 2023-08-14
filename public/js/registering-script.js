@@ -91,3 +91,23 @@ submitButton.addEventListener(
     },
     false
 );
+
+resetButton.addEventListener(
+    "click",
+    (event) => {
+        usernameInput.value        = "";
+        firstNameInput.value       = "";
+        lastNameInput.value        = "";
+        emailInput.value           = "";
+        userPasswordInput.value    = "";
+        confirmPasswordInput.value = "";
+        // Remove any child nodes first
+        if(remarkProviderContent.hasChildNodes()) {
+            while(remarkProviderContent.firstChild) {
+                remarkProviderContent.removeChild(remarkProviderContent.firstChild);
+            }
+        }
+        event.preventDefault();
+    },
+    false
+);

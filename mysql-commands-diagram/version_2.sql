@@ -74,6 +74,7 @@ CREATE TABLE History (
 CREATE TABLE Session (
     sessionID   INT AUTO_INCREMENT,
     userID      INT,
+    UUID        CHAR(36),
     timeOfLogin TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     ipAddress   BIGINT,
     PRIMARY KEY (sessionID),

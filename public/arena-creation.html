@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Login</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/form.design.css">
+        <script src="js/arena-creation-script.js" defer></script>
+    </head>
+    <body>
+        <section class="container min-vh-100 p-5">
+            <div class="row mb-3">
+                <h1 class="form-label-wrapper form-label">Arena Game Channel Creator</h1>
+            </div>
+            <div class="row mb-3">
+                <div class="row mb-3">
+                    <div class="col-9 p-0 pe-2">
+                        <h3 class="form-label-wrapper form-label m-0">Create Channel ID</h3>
+                    </div>
+                    <div class="col-3 p-0 ps-2 align-self-center">
+                        <button class="btn btn-primary w-100" id="generateChannelID">Generate Channel ID</button>
+                    </div>
+                </div>
+                <div class="row">
+                    <input class="form-control" id="channelID" type="text" readonly>
+                </div>
+            </div>
+            <div class="row" id="roomSection">
+                <div class="row mb-3">
+                    <div class="col-9 p-0 pe-2">
+                        <h3 class="m-0">Create Rooms</h3>
+                    </div>
+                    <div class="col-3 p-0 ps-2 align-self-center">
+                        <button class="btn btn-primary w-100" id="addRoom">Add Room</button>
+                    </div>
+                </div>
+                <div class="row mb-3 roomInformation">
+                    <div class="container text-bg-light p-3 rounded">
+                        <div class="mb-3 px-0">
+                            <label class="form-label-wrapper form-label" for="title">Title of Subject</label>
+                            <input class="form-control" id="title" type="text">
+                        </div>
+                        <div class="mb-3 px-0">
+                            <label class="form-label-wrapper form-label" for="answerFlag">Answer Flag</label>
+                            <input class="form-control" id="answerFlag" type="text">
+                        </div>
+                        <div class="mb-3 px-0">
+                            <label class="form-label-wrapper form-label" for="fileInput">File</label>
+                            <input class="form-control" id="fileInput" type="file">
+                        </div>
+                        <div class="mb-3 px-0">
+                            <label class="form-label-wrapper form-label" for="descriptionInput">Description</label>
+                            <textarea class="form-control" id="descriptionInput" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3 px-0">
+                            <button class="btn btn-primary" id="deleteRoom">Delete Room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </body>
+</html>
