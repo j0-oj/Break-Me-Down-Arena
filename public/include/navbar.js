@@ -6,7 +6,7 @@ const navigationBar = `
         <div class="container-fluid">
             <ul class="navbar-nav justify-content-center w-100">
                 <li class="nav-item">
-                    <a class="nav-link" href="#">Arena</a>
+                    <a class="nav-link" href="#arena">Arena</a>
                 </li>
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-bs-toggle="dropdown" href="#">
