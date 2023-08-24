@@ -6,8 +6,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-4bw+/aepP/YC94hEpVNVgiZdgIC5+VKNBQNGCHeKRQN+PtmoHDEXuppvnDJzQIu9" crossorigin="anonymous">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-        <script src="include/navbar.js" defer></script>         <!-- This comes first -->
-        <script src="js/dashboard-script.js" defer></script>    <!-- This comes second -->
+        <script src="include/navbar.js" defer></script>                     <!-- This comes first -->
+        <script src="js/cookie-cutter.js" type="module" defer></script>     <!-- This comes second -->
+        <script src="js/dashboard-script.js" type="module" defer></script>  <!-- This comes third -->
         <link rel="stylesheet" href="css/dashboard-design.css">
         <link rel="stylesheet" href="css/form.design.css">
     </head>
@@ -24,8 +25,8 @@
                 <div class="row m-4 p-4 text-bg-dark">
                     <div class="col-4">
                         <nav class="nav flex-column nav-fill">
-                            <button class="btn btn-outline-light mb-3" id="join">Join An Arena</button>
-                            <button class="btn btn-outline-light" id="create">Create An Arena</button>
+                            <button class="btn btn-outline-light mb-3" id="join">Join a Lobby</button>
+                            <button class="btn btn-outline-light" id="create">Create a Lobby</button>
                         </nav>
                     </div>
                     <div class="col-8" id="arenaPrompt">

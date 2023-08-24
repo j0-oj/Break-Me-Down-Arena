@@ -18,7 +18,6 @@
 
     // If a POST request is not made throw "Forbidden"
     if($_SERVER["REQUEST_METHOD"] === "POST") {
-
         // Retrieve information from POST form
         $username        = "";
         $firstName       = "";
