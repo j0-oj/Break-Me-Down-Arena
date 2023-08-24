@@ -84,12 +84,14 @@ async function validateLoginDetails() {
 };
 
 async function setClientCookie() {
+
+    let username = usernameInput.value;
     let UUID     = "";
 
     try {
         // Request UUID from server
         let response = await fetch(
-            "php-script/get_uuid.php",
+            `php-script/get_uuid_via_username.php?username=${username}`,
             {
                 method: "GET",
                 credentials: "include"
@@ -102,9 +104,8 @@ async function setClientCookie() {
 
         // Get Channel ID from server
         let data       = await response.text();
-        console.log(data);
         let jsonObject = JSON.parse(data);
-        UUID           = jsonObject.channel_id;
+        UUID           = jsonObject.UUID;
 
         // Set cookie
         setCookieValue("UUID", UUID);
@@ -123,7 +124,7 @@ submitButton.addEventListener(
                 if(state === "Successful") {
                     setClientCookie().then(
                         () => {
-                            window.location.href = "http://localhost/dashboard.html";
+                            window.location.href = "dashboard.html";
                         }
                     );
                 }

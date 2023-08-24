@@ -52,7 +52,7 @@ function createJoinLobbySection() {
             event.preventDefault();
             let lobby_id = document.getElementById("channelID").value;
             setCookieValue("lobby_id", lobby_id);
-            window.location.href = "http://localhost/join_lobby.html";
+            window.location.href = "join_lobby.html";
         },
         false
     );
@@ -74,7 +74,7 @@ function createNewLobbySection() {
         "click",
         (event) => {
             event.preventDefault();
-            window.location.href = "http://localhost/create_lobby.html";
+            window.location.href = "create_lobby.html";
         },
         false
     );
