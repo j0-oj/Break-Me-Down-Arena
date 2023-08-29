@@ -1,5 +1,5 @@
 <?php
-    function validatePOSTData($parameterName) {
+     function validatePOSTData($parameterName) {
         return (
             (isset($_POST[$parameterName])) && 
             (filter_has_var(INPUT_POST, $parameterName)) && 
@@ -22,18 +22,19 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if channelID exists & not empty in POST request
-        if(validatePOSTData("userID") && validatePOSTData("channelID")) {
-            // Sanitize GET information
-            $userID = sanitizePOSTData("userID");
+        // Check if channelID, UUID & role exists & not empty in POST request
+        if(validatePOSTData("channelID")) {
+            // Sanitize POST information
             $channelID = sanitizePOSTData("channelID");
-            $stmt = $pdo->prepare(
-                "INSERT INTO arena_player (channelID, userID, playerStatus) VALUES (?, ?, ?);"
-            );
-            $stmt->execute([$channelID, $userID, "NIL"]);
-        }
 
-        $resultArray = $stmt->fetch();
+            // Get userID of UUID from session
+            $stmt = $pdo->prepare(
+                "UPDATE arena
+                 SET hasGameStarted = ?
+                 WHERE channelID = ?;"
+            );
+            $stmt->execute([1, $channelID]);
+        }
 
         $jsonResult = array(
             "state" => "success"
@@ -41,6 +42,7 @@
 
         http_response_code(200);
         echo json_encode($jsonResult);
+        $stmt = null;
         exit();
     }
     else {

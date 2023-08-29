@@ -26,34 +26,43 @@
         if(validateGETData("channelID")) {
             // Sanitize GET information
             $channelID = sanitizeGETData("channelID");
+
             $stmt = $pdo->prepare(
-                "SELECT user.username 
-                 FROM arena_player
-                 LEFT JOIN user
-                 ON arena_player.userID = user.userID
-                 WHERE arena_player.channelID = ?;"
+                "SELECT room.roomID ,room.title, room.flagDescription, room.nameOfFile 
+                 FROM room 
+                 LEFT JOIN arena_room ON room.roomID = arena_room.roomID 
+                 WHERE arena_room.channelID = ?;"
             );
             $stmt->execute([$channelID]);
+
         }
 
         $resultArray = $stmt->fetchAll();
 
         if($resultArray) {
 
-            // print_r($resultArray);
-
             $jsonResult = array();
 
             for($index = 0; $index < count($resultArray); $index++) {
-                $username = [];
-                $playerUsername = $resultArray[$index]["username"];
-                $username["username"] = $playerUsername;
-                array_push($jsonResult, $username);
+                
+                $roomDetails = [];
+
+                $roomID          = $resultArray[$index]["roomID"];
+                $title           = $resultArray[$index]["title"];
+                $flagDescription = $resultArray[$index]["flagDescription"];
+                $nameOfFile      = $resultArray[$index]["nameOfFile"];
+
+                $roomDetails["roomID"]          = $roomID;
+                $roomDetails["title"]           = $title;
+                $roomDetails["flagDescription"] = $flagDescription;
+                $roomDetails["nameOfFile"]      = $nameOfFile;
+
+                array_push($jsonResult, $roomDetails);
             }
 
-            // print_r($jsonResult);
             http_response_code(200);
             echo json_encode($jsonResult);
+            $stmt = null;
             exit();
         }
         else {

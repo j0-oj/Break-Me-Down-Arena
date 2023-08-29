@@ -22,29 +22,38 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if username exists & not empty in POST request
-        if(validateGETData("username")) {
+        // Check if channelID exists & not empty in POST request
+        if(validateGETData("channelID") && validateGETData("UUID")) {
             // Sanitize GET information
-            $username = sanitizeGETData("username");
+            $channelID = sanitizeGETData("channelID");
+            $UUID      = sanitizeGETData("UUID");
+
+            // Get userID of UUID from session
             $stmt = $pdo->prepare(
-                "SELECT session.UUID
-                 FROM user
-                 LEFT JOIN session
-                 ON user.userID = session.userID
-                 WHERE user.username = ?;"
+                "SELECT userID FROM session WHERE UUID = ?;"
             );
-            $stmt->execute([$username]);
+            $stmt->execute([$UUID]);
+
+            $resultArray = $stmt->fetch();
+            $userID      = $resultArray["userID"];
+
+            // Get userID of UUID from session
+            $stmt = $pdo->prepare(
+                "SELECT playerStatus FROM arena_player WHERE userID = ? AND channelID = ?;"
+            );
+            $stmt->execute([$userID, $channelID]);
         }
 
         $resultArray = $stmt->fetch();
 
         if($resultArray) {
             $jsonResult = array(
-                "UUID" => $resultArray["UUID"],
+                "role" => $resultArray["playerStatus"]
             );
 
             http_response_code(200);
             echo json_encode($jsonResult);
+            $stmt = null;
             exit();
         }
         else {

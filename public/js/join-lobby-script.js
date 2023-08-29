@@ -38,7 +38,7 @@ async function addPlayertoLobby(userID, lobby_id) {
 
     let state = "";
 
-     // Create a data object with the form data
+    // Create a data object with the form data
     let formData = new URLSearchParams();
     formData.append("userID", userID);
     formData.append("channelID", lobby_id)
@@ -163,6 +163,66 @@ async function updatePlayerList(lobbyID) {
     }
 }
 
+async function requestIfSettingsHasBeenSet(lobbyID) {
+
+    let state = "";
+
+    try {
+        // Retrieve list of players
+        let response = await fetch(
+            `php-script/get_state_of_has_settings_been_set.php?channelID=${lobbyID}`,
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        state          = jsonObject.state;
+        
+    }
+    catch(error) {
+        console.error("Error:", error);
+    };
+
+    return state;
+}
+
+async function hasSettingsBeenSet(lobbyID) {
+    try {
+        while(true) {
+
+            let state = await requestIfSettingsHasBeenSet(lobbyID);
+
+            if(state === "True") {
+                redirectToRolesPage();
+            }
+            else {
+                console.log("Settings has not been set; No redirect");
+            }
+
+            await delay( 3 * 1000 );
+        }
+    }
+    catch( err ) {
+        console.error( "Error in myProgram: %o", err );
+    }
+    finally {
+        await browser.close();
+    }
+}
+
+function redirectToRolesPage() {
+    window.location.href = "get_roles_lobby.html";
+}
 
 async function main() {
     // Setup lobby ID and add current client to arena_player as NIL state
@@ -176,6 +236,8 @@ async function main() {
     if(state === "success") {
         // Updates list every 5 seconds
         updatePlayerList(lobbyID);
+        // Check if lobby setup is finish every 3 seconds
+        hasSettingsBeenSet(lobbyID);
     }
     else {
         console.error("Issued occured adding player");

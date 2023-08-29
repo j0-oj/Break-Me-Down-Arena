@@ -22,26 +22,42 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if username exists & not empty in POST request
-        if(validateGETData("username")) {
+        // Check if channelID exists & not empty in POST request
+        if(validateGETData("channelID") && validateGETData("role")) {
             // Sanitize GET information
-            $username = sanitizeGETData("username");
-            $stmt = $pdo->prepare(
-                "SELECT session.UUID
-                 FROM user
-                 LEFT JOIN session
-                 ON user.userID = session.userID
-                 WHERE user.username = ?;"
-            );
-            $stmt->execute([$username]);
+            $channelID = sanitizeGETData("channelID");
+            $role      = sanitizeGETData("role");
+            if($role === "attacker") {
+                $stmt = $pdo->prepare(
+                    "SELECT attackerPlayerLimit 
+                     FROM arena
+                     WHERE channelID = ?;"
+                );
+            }
+            if($role === "defender") {
+                $stmt = $pdo->prepare(
+                    "SELECT defenderPlayerLimit 
+                     FROM arena
+                     WHERE channelID = ?;"
+                );
+            }
+            $stmt->execute([$channelID]);
         }
 
         $resultArray = $stmt->fetch();
 
         if($resultArray) {
-            $jsonResult = array(
-                "UUID" => $resultArray["UUID"],
-            );
+            if($role === "attacker") {
+                $jsonResult = array(
+                    "attackerLimit" => $resultArray["attackerPlayerLimit"]
+                );
+            }
+            if($role === "defender") {
+                $jsonResult = array(
+                    "defenderLimit" => $resultArray["defenderPlayerLimit"]
+                );
+            }
+            
 
             http_response_code(200);
             echo json_encode($jsonResult);

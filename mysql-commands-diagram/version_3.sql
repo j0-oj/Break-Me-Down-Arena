@@ -24,6 +24,7 @@ CREATE TABLE arena (
     attackerPts         TINYINT,
     defenderPlayerLimit TINYINT,
     attackerPlayerLimit TINYINT,
+    hasSettingsBeenSet  TINYINT(1),
     hasGameStarted      TINYINT(1),
     hasGameFinished     TINYINT(1),
     timeStarted         TIMESTAMP,

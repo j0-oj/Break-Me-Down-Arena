@@ -22,29 +22,46 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if username exists & not empty in POST request
-        if(validateGETData("username")) {
+        // Check if channelID exists & not empty in POST request
+        if(validateGETData("channelID") && validateGETData("role")) {
             // Sanitize GET information
-            $username = sanitizeGETData("username");
-            $stmt = $pdo->prepare(
-                "SELECT session.UUID
-                 FROM user
-                 LEFT JOIN session
-                 ON user.userID = session.userID
-                 WHERE user.username = ?;"
-            );
-            $stmt->execute([$username]);
+            $channelID = sanitizeGETData("channelID");
+            $role      = sanitizeGETData("role");
+            if($role === "king-defender") {
+                $stmt = $pdo->prepare(
+                    "SELECT COUNT(*) 
+                     FROM arena_player
+                     WHERE channelID = ? AND playerStatus = 'KING-DEFENDER';"
+                );
+            }
+            if($role === "attacker") {
+                $stmt = $pdo->prepare(
+                    "SELECT COUNT(*) 
+                     FROM arena_player
+                     WHERE channelID = ? AND playerStatus = 'ATTACKER';"
+                );
+            }
+            if($role === "defender") {
+                $stmt = $pdo->prepare(
+                    "SELECT COUNT(*) 
+                     FROM arena_player
+                     WHERE channelID = ? AND playerStatus = 'DEFENDER';"
+                );
+            }
+            $stmt->execute([$channelID]);
         }
 
         $resultArray = $stmt->fetch();
 
         if($resultArray) {
             $jsonResult = array(
-                "UUID" => $resultArray["UUID"],
+                "playerCount" => $resultArray["COUNT(*)"]
             );
+            
 
             http_response_code(200);
             echo json_encode($jsonResult);
+            $stmt = null;
             exit();
         }
         else {

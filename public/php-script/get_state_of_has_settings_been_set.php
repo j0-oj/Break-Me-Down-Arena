@@ -22,29 +22,35 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if username exists & not empty in POST request
-        if(validateGETData("username")) {
+        // Check if channelID exists & not empty in POST request
+        if(validateGETData("channelID")) {
             // Sanitize GET information
-            $username = sanitizeGETData("username");
+            $channelID = sanitizeGETData("channelID");
+
+            // Get points of current channel from arena
             $stmt = $pdo->prepare(
-                "SELECT session.UUID
-                 FROM user
-                 LEFT JOIN session
-                 ON user.userID = session.userID
-                 WHERE user.username = ?;"
+                "SELECT hasSettingsBeenSet FROM arena WHERE channelID = ?;"
             );
-            $stmt->execute([$username]);
+            $stmt->execute([$channelID]);
         }
 
         $resultArray = $stmt->fetch();
 
         if($resultArray) {
-            $jsonResult = array(
-                "UUID" => $resultArray["UUID"],
-            );
+            if($resultArray["hasSettingsBeenSet"] === 0) {
+                $jsonResult = array(
+                    "state" => "False"
+                );
+            }
+            if($resultArray["hasSettingsBeenSet"] === 1) {
+                $jsonResult = array(
+                    "state" => "True"
+                );
+            }
 
             http_response_code(200);
             echo json_encode($jsonResult);
+            $stmt = null;
             exit();
         }
         else {

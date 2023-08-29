@@ -69,7 +69,7 @@ async function addArenaWithLobbyID(lobby_id) {
 
     let state = "";
 
-     // Create a data object with the form data
+    // Create a data object with the form data
     let formData = new URLSearchParams();
     formData.append("channelID", lobby_id);
 
@@ -277,6 +277,76 @@ function copyLobbyID(lobbyID) {
         false);
 }
 
+async function submitLobbySettings() {
+    let defenderLimit = document.getElementById("defenderLimit").value;
+    let attackerLimit = document.getElementById("attackerLimit").value;
+    let timeLimit     = document.getElementById("timeLimit").value;
+    let points        = document.getElementById("points").value;
+    let lobbyID       = getCookieValue("lobby_id");
+
+    let state = "";
+
+    // Create a data object with the form data
+    let formData = new URLSearchParams();
+    formData.append("defenderLimit", defenderLimit);
+    formData.append("attackerLimit", attackerLimit);
+    formData.append("timeLimit", timeLimit);
+    formData.append("points", points);
+    formData.append("channelID", lobbyID);
+
+    try {
+        // Validate user credentials
+        let response = await fetch(
+            "php-script/add_lobby_settings.php",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        state          = jsonObject.state;
+        
+    }
+    catch(error) {
+        console.error("Error:", error);
+    };
+
+    return state;
+}
+
+function redirectToRolesPage() {
+    window.location.href = "get_roles_lobby.html";
+}
+
+function setSubmitSettingsButton() {
+    let submitButton = document.getElementById("startArena");
+
+    submitButton.addEventListener(
+        "click",
+        async (event) => {
+            event.preventDefault();
+            let state = "";
+
+            state = await submitLobbySettings();
+
+            if(state === "success") {
+                redirectToRolesPage();
+            }
+        },
+        false
+    );
+}
+
 async function main() {
     // Setup lobby ID and add current client to arena_player as NIL state
     let state   = "";
@@ -297,6 +367,8 @@ async function main() {
         displayLobbyID(lobbyID);
         // Set Copy Button
         copyLobbyID(lobbyID);
+        // Set Start Arena Button
+        setSubmitSettingsButton();
         // Updates list every 5 seconds
         updatePlayerList(lobbyID);
     }

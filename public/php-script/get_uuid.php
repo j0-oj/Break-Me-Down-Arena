@@ -11,6 +11,7 @@
         
         http_response_code(200);
         echo json_encode($jsonResult);
+        exit();
     }
     else {
         http_response_code(404);

@@ -22,15 +22,32 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if channelID exists & not empty in POST request
-        if(validatePOSTData("userID") && validatePOSTData("channelID")) {
+        if(
+            validatePOSTData("defenderLimit") && 
+            validatePOSTData("attackerLimit") && 
+            validatePOSTData("timeLimit") && 
+            validatePOSTData("points") && 
+            validatePOSTData("channelID")
+        ) {
             // Sanitize GET information
-            $userID = sanitizePOSTData("userID");
-            $channelID = sanitizePOSTData("channelID");
+            $defenderLimit = sanitizePOSTData("defenderLimit");
+            $attackerLimit = sanitizePOSTData("attackerLimit");
+            $timeLimit     = sanitizePOSTData("timeLimit");
+            $points        = sanitizePOSTData("points");
+            $channelID     = sanitizePOSTData("channelID");
             $stmt = $pdo->prepare(
-                "INSERT INTO arena_player (channelID, userID, playerStatus) VALUES (?, ?, ?);"
+                "UPDATE arena
+                 SET
+                 defenderPts = ?, 
+                 attackerPts = ?, 
+                 defenderPlayerLimit = ?, 
+                 attackerPlayerLimit = ?,
+                 hasSettingsBeenSet = ?, 
+                 timeLimit = ?
+                 WHERE channelID = ?;"
+                
             );
-            $stmt->execute([$channelID, $userID, "NIL"]);
+            $stmt->execute([$points, 0, $defenderLimit, $attackerLimit, 1, $timeLimit, $channelID]);
         }
 
         $resultArray = $stmt->fetch();

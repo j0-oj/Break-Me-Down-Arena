@@ -1,0 +1,21 @@
+.timer-wrapper {
+    height: 150px;
+}
+
+.timer-title-wrapper {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.timer-content-wrapper {
+    height: 75px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#timer-content {
+    font-size: 3rem;
+}
