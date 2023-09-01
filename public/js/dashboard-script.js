@@ -5,7 +5,7 @@ function generateUserInformation() {
     let content = `
         <div class="row">
             <div class="mt-4 mb-1">
-                <h5><b id="userTitle">user</b>@BreakMeDown:/home$ cat welcome.txt</h5>
+                <h5><b id="userTitle">foo</b>@BreakMeDown:/home$ cat welcome.txt</h5>
             </div>
         </div>
         <div class="row">
@@ -43,7 +43,7 @@ function generateUserInformation() {
                         <h5 class="text-center m-0"><b>Total Game Count:</b></h5>
                     </div>
                     <div class="my-3">
-                        <h1 class="text-center m-0"><b id="gameCount">40</b></h1>
+                        <h1 class="text-center m-0"><b id="gameCount">0</b></h1>
                     </div>
                     <div class="mt-2">
                         <h5 class="text-center m-0"><b>Gameplays</b></h5>
@@ -410,6 +410,7 @@ async function main() {
     // Add Listeners to the required buttons
     addEventButtonToJoinAndCreate();
     addEventToRedirect();
+
 }
 
 main();
