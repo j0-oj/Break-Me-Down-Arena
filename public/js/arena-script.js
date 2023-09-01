@@ -1,4 +1,4 @@
-import { getCookieValue, setCookieValue} from "./cookie-cutter.js";
+import { getCookieValue, setCookieValue } from "./cookie-cutter.js";
 
 async function getCurrentRoleOfPlayer(lobbyID, UUID) {
 
@@ -82,6 +82,25 @@ function generateTimeContent() {
     `;
 
     return content;
+}
+
+function generateScoreBoard() {
+
+    let content = `
+        <div class="row">
+            <div class="container scoreboard-wrapper flex-column">
+                <div class="scoreboard-title-wrapper">
+                    <h1 class="text-center m-0">Defender VS Attacker</h1>
+                </div>
+                <div class="scoreboard-content-wrapper">
+                    <h1 class="text-center m-0" id="scoreboardContent">0 : 0</h1>
+                </div>
+            </div>
+        </div>
+    `;
+
+    return content;
+
 }
 
 async function getListOfFormDetails(lobbyID) {
@@ -213,14 +232,31 @@ async function createAttackerContent(idOfMainContainer, lobbyID) {
     mainSection.insertAdjacentHTML("afterbegin", content);
 }
 
-async function submitAnswer(roomID, answerInput) {
+function createScoreboardContent(idOfMainContainer) {
+
+    let mainSection = document.getElementById(idOfMainContainer);
+
+    let generatedHTMLTimer = generateTimeContent();
+
+    let generateHTMLScoreBoard = generateScoreBoard();
+
+    let content = `
+        ${generatedHTMLTimer}
+        ${generateHTMLScoreBoard}
+    `;
+
+    mainSection.insertAdjacentHTML("afterbegin", content);
+}
+
+async function submitAnswer(roomID, answerInput, lobbyID) {
 
     let state = "";
 
     // Create a data object with the form data
     let formData = new URLSearchParams();
     formData.append("roomID", roomID);
-    formData.append("answerInput", answerInput)
+    formData.append("answerInput", answerInput);
+    formData.append("channelID", lobbyID);
 
     try {
         // Validate user credentials
@@ -259,7 +295,7 @@ function disableButton(answerBtn) {
     answerBtn.innerHTML = "Correct Answer";
 }
 
-function createSubmitAnswerButton() {
+function createSubmitAnswerButton(lobbyID) {
 
     let listOfSubmitButton = document.getElementsByClassName("submitAnswer");
 
@@ -278,7 +314,7 @@ function createSubmitAnswerButton() {
                 let answerBtn   = currentButton;
                 
                 // Submit answer to table
-                let state = await submitAnswer(roomID, answerInput);
+                let state = await submitAnswer(roomID, answerInput, lobbyID);
 
                 // If successful replace button with "correct" h3
                 if(state === "success") {
@@ -296,13 +332,17 @@ function createSubmitAnswerButton() {
 
 }
 
+function redirectToScoreboardPage() {
+    window.location.href = "scoreboard.html";
+}
+
 async function delay( ms, state = null ) {
     return new Promise( ( resolve, reject ) => {
         window.setTimeout( () => resolve( state ), ms );
     } );
 }
 
-async function createTimerContent(timeLimit) {
+async function createTimerContent(timeLimit, UUID, lobbyID) {
 
     let timeLimitInSeconds = getCookieValue("timer");
 
@@ -323,7 +363,14 @@ async function createTimerContent(timeLimit) {
 
             if(timeLimitInSeconds === -1) {
                 setCookieValue("timer", 0);
-                // Redirect to scoreboard.html
+                let state = await updateArenaAsFinished();
+                if(state === "success") {
+                    state = await createHistoryOfUser(UUID, lobbyID);
+                    if(state === "success") {
+                        // Redirect to scoreboard.html
+                        redirectToScoreboardPage();
+                    }
+                }
             }
             else {
                 timerContent.innerHTML = `${minuteStr.padStart(2, "0")}:${secondStr.padStart(2, "0")}`;
@@ -342,6 +389,204 @@ async function createTimerContent(timeLimit) {
     }
 }
 
+async function getStateOnIfAllRoomsAreCompleted(lobbyID) {
+
+    let state = "";
+
+    try {
+        // Request for user information via UUID
+        let response = await fetch(
+            `php-script/get_state_if_all_room_is_completed.php?channelID=${lobbyID}`,
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        state          = jsonObject.state;
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+
+    return state;
+
+}
+
+async function checkIfAllRoomsAreCompleted(UUID, lobbyID) {
+
+    try {
+        while(true) {
+
+            let state = await getStateOnIfAllRoomsAreCompleted(lobbyID);
+
+            // Redirect to scoreboard.html
+            if(state === "True") {
+                setCookieValue("timer", 0);
+                let state = await updateArenaAsFinished();
+                if(state === "success") {
+                    state = await createHistoryOfUser(UUID, lobbyID);
+                    if(state === "success") {
+                        // Redirect to scoreboard.html
+                        redirectToScoreboardPage();
+                    }
+                }
+            }
+            else {
+                console.log("All rooms are not completed yet...");
+            }
+
+            await delay( 3000 );
+        }
+    }
+    catch( err ) {
+        console.error( "Error in myProgram: %o", err );
+    }
+    finally {
+        await browser.close();
+    }
+
+}
+
+async function getDefenderAndAttackerScore(lobbyID) {
+
+    let points = [];
+
+    try {
+        // Request for user information via UUID
+        let response = await fetch(
+            `php-script/get_defender_and_attacker_points.php?channelID=${lobbyID}`,
+            {
+                method: "GET",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                }
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        points.push(jsonObject.defenderPoints);
+        points.push(jsonObject.attackerPoints);
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+
+    return points;
+
+}
+
+async function updateScoreboard(lobbyID) {
+    try {
+        while(true) {
+
+            let points = await getDefenderAndAttackerScore(lobbyID);
+
+            let scoreboardContent = document.getElementById("scoreboardContent");
+
+            scoreboardContent.innerHTML = `${points[0]} : ${points[1]}`;
+
+            await delay( 5 * 1000 );
+        }
+    }
+    catch( err ) {
+        console.error( "Error in myProgram: %o", err );
+    }
+    finally {
+        await browser.close();
+    }
+}
+
+async function updateArenaAsFinished(lobbyID) {
+    
+    let state = "";
+
+    let formData = new URLSearchParams();
+    formData.append("channelID", lobbyID);
+
+    try {
+        // Request for user information via UUID
+        let response = await fetch(
+            "php-script/update_arena_as_finished.php",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        state          = jsonObject.state;
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+
+    return state;
+
+}
+
+async function createHistoryOfUser(UUID, lobbyID) {
+
+    let state = "";
+
+    let formData = new URLSearchParams();
+    formData.append("UUID", UUID);
+    formData.append("channelID", lobbyID);
+
+    try {
+        // Request for user information via UUID
+        let response = await fetch(
+            "php-script/add_history_of_user.php",
+            {
+                method: "POST",
+                credentials: "include",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: formData.toString()
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        let data       = await response.text();
+        let jsonObject = JSON.parse(data);
+        state          = jsonObject.state;
+
+    } catch (error) {
+        console.error("Error:", error);
+    }
+
+    return state;
+
+}
+
 async function main() {
 
     let UUID    = getCookieValue("UUID");
@@ -353,7 +598,7 @@ async function main() {
     // Get timeLimit of game
     let timeLimit = await getTimeLimit(lobbyID);
 
-    if(getCookieValue("timer") === 0) {
+    if(getCookieValue("timer") == 0) {
         setCookieValue("timer", timeLimit * 60);
     }
 
@@ -361,24 +606,23 @@ async function main() {
         await createAttackerContent("main-content", lobbyID);
     }
     else {
-
+        createScoreboardContent("main-content", lobbyID);
     }
 
     // Create timer with time limit
-    createTimerContent(timeLimit);
+    createTimerContent(timeLimit, UUID, lobbyID);
 
     if(role === "ATTACKER") {
         // Set Submit Answer event for each button
-        await createSubmitAnswerButton();
-        // Create a timer interval that checks if all rooms has been solved then redirect to scoreboard
-
-
+        await createSubmitAnswerButton(lobbyID);
+        // Create a timer interval that checks if all rooms has been solved then redirect to scoreboard (3 seconds)
+        checkIfAllRoomsAreCompleted(UUID, lobbyID);
     }
     else {
-        // Create a timer interval that updates the scoreboard
-
-        // Create a timer interval that checks if game has been finished
-
+        // Create a timer interval that updates the scoreboard (5 seconds)
+        updateScoreboard(lobbyID);
+        // Create a timer interval that checks if game has been finished (3 seconds)
+        checkIfAllRoomsAreCompleted(UUID, lobbyID);
     }
 
 }

@@ -29,17 +29,18 @@
             validatePOSTData("flagDescription") && 
             validatePOSTData("flagAnswer")
         ) {
-            $uploadDirectory = __DIR__ . "/../uploads/";
-            $uploadFile      = $uploadDirectory . basename($_FILES["flagFile"]["name"]);
 
             // Sanitize POST information
             $channelID       = sanitizePOSTData("channelID");
             $title           = sanitizePOSTData("title");
             $flagDescription = sanitizePOSTData("flagDescription");
             $flagAnswer      = sanitizePOSTData("flagAnswer");
-            $nameOfFile      = "uploads/" . basename($_FILES["flagFile"]["name"]);
 
             if(!empty($_FILES['flagFile']['tmp_name'])) {
+                $uploadDirectory = __DIR__ . "/../uploads/";
+                $uploadFile      = $uploadDirectory . basename($_FILES["flagFile"]["name"]);
+                $nameOfFile      = "uploads/" . basename($_FILES["flagFile"]["name"]);
+                
                 // Only upload to table if file is saved properly
                 if(move_uploaded_file($_FILES['flagFile']['tmp_name'], $uploadFile)) {
 

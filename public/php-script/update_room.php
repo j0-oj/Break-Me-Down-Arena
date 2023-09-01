@@ -22,10 +22,11 @@
         require_once($pdoPHPscriptPath);
 
         // Check if channelID, UUID & role exists & not empty in POST request
-        if(validatePOSTData("roomID") && validatePOSTData("answerInput")) {
+        if(validatePOSTData("roomID") && validatePOSTData("answerInput") && validatePOSTData("channelID")) {
             // Sanitize POST information
             $roomID      = sanitizePOSTData("roomID");
             $answerInput = sanitizePOSTData("answerInput");
+            $channelID   = sanitizePOSTData("channelID");
 
             // Get userID of UUID from session
             $stmt = $pdo->prepare(
@@ -36,15 +37,34 @@
             $resultArray = $stmt->fetch();
             $flagAnswer  = $resultArray["flagAnswer"];
 
+            // Get defenderPts and attackerPts
+            $stmt = $pdo->prepare(
+                "SELECT defenderPts, attackerPts FROM arena WHERE channelID = ?;"
+            );
+            $stmt->execute([$channelID]);
+
+            $resultArray = $stmt->fetch();
+            $defenderPts = $resultArray["defenderPts"];
+            $attackerPts = $resultArray["attackerPts"];
+
             if($flagAnswer === $answerInput) {
                 // Update role of player with userID & channelID
                 $stmt = $pdo->prepare(
                     "UPDATE room
                      SET roomCompletion = ?
                      WHERE roomID = ?;"
-                    
                 );
                 $stmt->execute([1, $roomID]);
+
+                // Update defenderPts and attackerPts of arena
+                $defenderPts = $defenderPts - 1;
+                $attackerPts = $attackerPts + 1;
+                $stmt = $pdo->prepare(
+                    "UPDATE arena
+                     SET defenderPts = ?, attackerPts = ?
+                     WHERE channelID = ?;"
+                );
+                $stmt->execute([$defenderPts, $attackerPts, $channelID]);
 
                 $jsonResult = array(
                     "state" => "success"

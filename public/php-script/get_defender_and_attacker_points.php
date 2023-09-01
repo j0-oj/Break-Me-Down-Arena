@@ -26,23 +26,22 @@
         if(validateGETData("channelID")) {
             // Sanitize GET information
             $channelID = sanitizeGETData("channelID");
-
-            // Get points of current channel from arena
             $stmt = $pdo->prepare(
-                "SELECT defenderPts, attackerPts FROM arena WHERE channelID = ?;"
+                "SELECT attackerPts, defenderPts
+                 FROM arena
+                 WHERE channelID = ?;"
             );
             $stmt->execute([$channelID]);
         }
 
         $resultArray = $stmt->fetch();
 
-        $totalPoints = $resultArray["defenderPts"] + $resultArray["attackerPts"];
-
         if($resultArray) {
             $jsonResult = array(
-                "points" => $totalPoints
+                "attackerPoints" => $resultArray["attackerPts"],
+                "defenderPoints" => $resultArray["defenderPts"]
             );
-
+            
             http_response_code(200);
             echo json_encode($jsonResult);
             $stmt = null;

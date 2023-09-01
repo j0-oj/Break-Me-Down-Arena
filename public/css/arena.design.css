@@ -19,3 +19,25 @@
 #timer-content {
     font-size: 3rem;
 }
+
+.scoreboard-wrapper {
+    height: 220px;
+}
+
+.scoreboard-title-wrapper {
+    height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.scoreboard-content-wrapper {
+    height: 150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#scoreboardContent {
+    font-size: 6rem;
+}

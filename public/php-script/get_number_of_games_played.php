@@ -22,25 +22,23 @@
         $pdoPHPscriptPath = __DIR__ . "/../../config/pdo_connection.php";
         require_once($pdoPHPscriptPath);
 
-        // Check if channelID exists & not empty in POST request
-        if(validateGETData("channelID")) {
+        if(validateGETData("userID")) {
             // Sanitize GET information
-            $channelID = sanitizeGETData("channelID");
+            $userID = sanitizeGETData("userID");
 
-            // Get points of current channel from arena
             $stmt = $pdo->prepare(
-                "SELECT defenderPts, attackerPts FROM arena WHERE channelID = ?;"
+                "SELECT COUNT(*) 
+                 FROM history
+                 WHERE userID = ?;"
             );
-            $stmt->execute([$channelID]);
+            $stmt->execute([$userID]);
         }
 
         $resultArray = $stmt->fetch();
 
-        $totalPoints = $resultArray["defenderPts"] + $resultArray["attackerPts"];
-
         if($resultArray) {
             $jsonResult = array(
-                "points" => $totalPoints
+                "numberOfGames" => $resultArray["COUNT(*)"]
             );
 
             http_response_code(200);
