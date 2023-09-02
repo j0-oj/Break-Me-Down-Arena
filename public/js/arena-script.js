@@ -346,7 +346,7 @@ async function createTimerContent(timeLimit, UUID, lobbyID) {
 
     let timeLimitInSeconds = getCookieValue("timer");
 
-    if(getCookieValue("timer") === 0) {
+    if(getCookieValue("timer") == 0) {
         timeLimitInSeconds = timeLimit * 60;
     }
     

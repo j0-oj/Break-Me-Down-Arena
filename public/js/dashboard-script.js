@@ -1,4 +1,4 @@
-import { getCookieValue } from "./cookie-cutter.js";
+import { getCookieValue, setCookieValue } from "./cookie-cutter.js";
 
 function generateUserInformation() {
 
@@ -181,6 +181,10 @@ function addEventToRedirect() {
         "click",
         (event) => {
             event.preventDefault();
+
+            let lobbyIDCookie = document.getElementById("channelID").value;
+            setCookieValue("lobby_id", lobbyIDCookie);
+
             window.location.href = "join_lobby.html";
         },
         false
@@ -325,17 +329,23 @@ async function getFiveRecentGamesPlayed(userID) {
         let data       = await response.text();
         let jsonObject = JSON.parse(data);
 
-        let totalCount    = jsonObject.length;
+        let state = jsonObject[0].state;
 
-        for(let index = 0; index < totalCount; index++) {
-            let dateOfGame   = jsonObject[index].dateOfGame;
-            let gameRole     = jsonObject[index].gameRole;
-            let pointsEarned = jsonObject[index].pointsEarned;
-            let result       = jsonObject[index].result;
+        listOfGame.push(state)
 
-            let formValue       = [dateOfGame, gameRole, pointsEarned, result];
+        if(state === "success") {
+            let totalCount    = jsonObject.length;
 
-            listOfGame.push(formValue)
+            for(let index = 1; index < totalCount; index++) {
+                let dateOfGame   = jsonObject[index].dateOfGame;
+                let gameRole     = jsonObject[index].gameRole;
+                let pointsEarned = jsonObject[index].pointsEarned;
+                let result       = jsonObject[index].result;
+
+                let formValue       = [dateOfGame, gameRole, pointsEarned, result];
+
+                listOfGame.push(formValue)
+            }
         }
 
     } catch (error) {
@@ -347,12 +357,16 @@ async function getFiveRecentGamesPlayed(userID) {
 
 function updateTableHistory(listOfGames) {
 
+    console.log(listOfGames);
+
     let tableHistoryContent = document.getElementById("tableContent");
 
     let historyContent = "";
 
-    if(listOfGames.length > 0) {
-        for(let index = 0; index < listOfGames.length; index++) {
+    let state = listOfGames[0];
+
+    if(state === "success") {
+        for(let index = 1; index < listOfGames.length; index++) {
 
             let historyDetail = listOfGames[index];
     

@@ -36,6 +36,8 @@
 
         $resultArray = $stmt->fetch();
 
+        $jsonResult = [];
+
         if($resultArray) {
             if($resultArray["hasGameStarted"] === 0) {
                 $jsonResult = array(

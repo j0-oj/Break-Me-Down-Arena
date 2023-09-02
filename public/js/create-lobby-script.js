@@ -353,6 +353,8 @@ async function main() {
     let lobbyID = await getLobbyID();
     let userID  = await getCurrentUserID();
 
+    setCookieValue("timer", 0);
+
     state = await addArenaWithLobbyID(lobbyID);
     if(state === "success") {
         state = await addPlayertoLobby(userID, lobbyID);

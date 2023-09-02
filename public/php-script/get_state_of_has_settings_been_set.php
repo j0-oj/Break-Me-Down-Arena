@@ -36,6 +36,8 @@
 
         $resultArray = $stmt->fetch();
 
+        $jsonResult = [];
+        
         if($resultArray) {
             if($resultArray["hasSettingsBeenSet"] === 0) {
                 $jsonResult = array(

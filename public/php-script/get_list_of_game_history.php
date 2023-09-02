@@ -40,9 +40,15 @@
 
         $resultArray = $stmt->fetchAll();
 
+        $stateResponse = [];
+
         if($resultArray) {
 
             $jsonResult = array();
+
+            $stateResponse["state"] = "success";
+
+            array_push($jsonResult, $stateResponse);
 
             for($index = 0; $index < count($resultArray); $index++) {
                 
@@ -92,7 +98,16 @@
             exit();
         }
         else {
-            http_response_code(404);
+
+            $jsonResult = array();
+
+            $stateResponse["state"] = "error";
+
+            array_push($jsonResult, $stateResponse);
+
+            http_response_code(200);
+            echo json_encode($jsonResult);
+            $stmt = null;
             exit();
         }
     }

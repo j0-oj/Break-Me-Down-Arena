@@ -1,4 +1,4 @@
-import { getCookieValue } from "./cookie-cutter.js";
+import { getCookieValue, setCookieValue } from "./cookie-cutter.js";
 
 const playerListContent = document.getElementById("playerList");
 
@@ -229,6 +229,8 @@ async function main() {
     let state   = "";
     let lobbyID = getCookieValue("lobby_id");
     let userID  = await getCurrentUserID();
+
+    setCookieValue("timer", 0);
 
     state = await addPlayertoLobby(userID, lobbyID);
 
