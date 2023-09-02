@@ -133,3 +133,7 @@ submitButton.addEventListener(
     },
     false
 );
+
+setCookieValue("UUID", "");
+setCookieValue("lobby_id", "");
+setCookieValue("timer", 0);

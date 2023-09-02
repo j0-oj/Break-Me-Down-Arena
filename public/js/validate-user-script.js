@@ -42,7 +42,7 @@ async function main() {
     if(state !== "success") {
         setCookieValue("UUID", "");
         setCookieValue("lobby_id", "");
-        setCookieValue("lobby_id", "0");
+        setCookieValue("timer", "0");
         window.location.href = "login.html";
     }
 
