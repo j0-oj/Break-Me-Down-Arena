@@ -140,7 +140,7 @@ function createAttackerOrDefenderContent(idOfMainContainer) {
     mainSection.insertAdjacentHTML("afterbegin", content);
 }
 
-function creatAddRoomButtonEvent(idOfMainContainer, lobby_id) {
+function createAddRoomButtonEvent(idOfMainContainer, lobby_id) {
 
     let addRoomButton = document.getElementById("submitRoom");
 
@@ -195,6 +195,7 @@ async function addRoomToTable(listOfFormValues, lobby_id) {
     let state         = "";
     let numberOfForms = listOfFormValues.length;
 
+
     for(let count = 0; count < numberOfForms; count++) {
 
         try {
@@ -205,6 +206,7 @@ async function addRoomToTable(listOfFormValues, lobby_id) {
             formData.append("flagDescription", listOfFormValues[count][1]);
             formData.append("flagAnswer", listOfFormValues[count][2]);
             formData.append("flagFile", listOfFormValues[count][3]);
+        
 
             // Validate user credentials
             let response = await fetch(
@@ -345,7 +347,7 @@ async function main() {
 
     if(role === "KING-DEFENDER") {
         // Set button event that adds rooms then redirect to arena.html
-        creatAddRoomButtonEvent("main-content", lobbyID);
+        createAddRoomButtonEvent("main-content", lobbyID);
     }
     else {
         // Set time listener for ready game state then redirect to arena.html

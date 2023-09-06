@@ -220,7 +220,7 @@ async function updatePlayerList(lobbyID) {
             else {
                 console.log("No new players found");
             }
-
+            // set as 5000ms or 5 seconds
             await delay( 5 * 1000 );
         }
     }

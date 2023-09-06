@@ -16,11 +16,13 @@ async function getNumberOfDefender(lobbyID) {
                 }
             }
         );
-
+        
+        // Check if response is ok or not (ok = 200) 
         if (!response.ok) {
             throw new Error(`HTTP error! Status: ${response.status}`);
         }
 
+        // Get data from response and parse it to JSON object 
         let data         = await response.text();
         let jsonObject   = JSON.parse(data);
         numberOfDefender = jsonObject.defenderLimit;

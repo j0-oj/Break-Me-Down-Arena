@@ -1,5 +1,5 @@
 export function setCookieValue(name, value) {
-    // Create expiry data
+    // Create expiry data for cookie (1 day)
     let now = new Date();
     let time = now.getTime();
     let expiryTime = time + (1000 * 3600 * 24 * 1);
@@ -10,6 +10,7 @@ export function setCookieValue(name, value) {
     document.cookie = newCookie;
 }
 
+// this function is used to get the value of a cookie by name (e.g. "UUID")
 export function getCookieValue(name) {
     // Declare and initialize a dictionary
     let cookie = {};

@@ -6,6 +6,7 @@ const submitButton          = document.getElementById("submit");
 const remarkProviderSection = document.getElementById("remarkProviderSection");
 const remarkProviderContent = document.getElementById("remarkProvider");
 
+// this function will validate the login details
 async function validateLoginDetails() {
     let username = usernameInput.value;
     let password = passwordInput.value;
@@ -15,7 +16,8 @@ async function validateLoginDetails() {
     let formData = new URLSearchParams();
     formData.append("username", username);
     formData.append("password", password);
-
+    
+    // Send the data to the server using fetch API and POST method 
     try {
         // Validate user credentials
         let response = await fetch(

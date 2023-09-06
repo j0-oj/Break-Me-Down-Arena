@@ -163,11 +163,12 @@ function generateRoomsBasedOnFormDetails(listOfFormDetails) {
         let nameOfFile      = formDetails[3];
         let fileName        = nameOfFile.split("/")[1];
 
+
         let linkToFile = function (nameOfFile, fileName) {
 
             let content = ``;
 
-            if(nameOfFile !== "") {
+            if((nameOfFile !== "") && (fileName !== undefined)) {
                 content = `
                     <div class="row mb-3">
                         <p class="form-label-wrapper m-0">File: 
